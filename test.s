@@ -70,7 +70,7 @@ SECTION "test",ROM0[$150]
 	ldh	[$11],a
 
 	; PU1 envelope = 15
-	ld	a,$f0
+	ld	a,$f8
 	ldh	[$12],a
 
 	; PU1 low frequency
