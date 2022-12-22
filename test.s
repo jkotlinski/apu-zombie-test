@@ -1,3 +1,6 @@
+; MIT License
+; Copyright (c) 2022 Johan Kotlinski
+
 MACRO dec_vol		
 	ld	a,9
 	ldh	[c],a
