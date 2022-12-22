@@ -1,8 +1,6 @@
 # APU Zombie Test
 
-## Goal
-
-To test the Game Boy amplitude envelope generation techniques known as "zombie mode".
+Tests the Game Boy amplitude envelope generation techniques known as "zombie mode".
 
 ## Test Instructions
 
