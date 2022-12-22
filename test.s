@@ -114,7 +114,7 @@ pulse:
 	dec_vol_15_times
 	call	pause
 	inc_vol_15_times
-	jp pulse
+	jp 	pulse
 
 pause:
 	ld	hl,0
