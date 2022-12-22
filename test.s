@@ -65,6 +65,10 @@ SECTION "test",ROM0[$150]
         ld      a,$80
         ldh     [$26],a
 
+	; PU1 sweep = disable
+	ld	a,0
+	ldh	[$10],a
+
 	; PU1 sound length/wave pattern duty
 	ld	a,0
 	ldh	[$11],a
