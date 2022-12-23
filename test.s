@@ -127,7 +127,7 @@ beep_pause:
 dec_vol:
 	; Zombie mode fails when writing 9 to NRx2 while DIV bit 4 changes to 1.
 	; (This was observed during $6F=>$70 transition in SameBoy, single-speed mode.)
-	; The below loops avoids that by delaying the NRx2 write.
+	; The below loops avoid that by delaying the NRx2 write.
 	; On CGB double speed, the problem ought to be with bit 5 instead.
 
 	ldh	a,[is_dmg]
