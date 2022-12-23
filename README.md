@@ -4,7 +4,7 @@ Tests the Game Boy amplitude envelope generation techniques known as "zombie mod
 
 ## Test Instructions
 
-1. [Download test ROM here.](https://github.com/jkotlinski/apu-zombie-test/releases/tag/v0.0.2)
+1. [Download test ROM here.](https://github.com/jkotlinski/apu-zombie-test/releases/tag/)
 2. Start ROM on your device.
 3. Wait ~15 seconds.
 4. Verify that the device beeps with loud pulses.
