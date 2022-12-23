@@ -2,6 +2,13 @@
 ; Copyright (c) 2022 Johan Kotlinski
 
 MACRO dec_vol		
+	; Tries to avoid APU tick during decrease.
+	; $1f was determined by trial and error.
+: 	ldh	a,[4]
+	and	$1f
+	cp	a,$1f
+	jr	z,:-
+
 	ld	a,9
 	ldh	[c],a
 	ld	a,$11
@@ -87,17 +94,12 @@ SECTION "test",ROM0[$150]
 
 	ld	c,$12 ; point c to PU1 envelope
 
-	ld	hl,2338
+	ld	hl,0
 
 	; we are now at max volume.
 	; as a stress test, go to 0 volume and back a lot of times.
 
 mainloop:
-	; pad loop to a prime number of cycles (223).
-	nop
-	nop
-	nop
-
 	dec_vol_15_times
 	inc_vol_15_times
 
