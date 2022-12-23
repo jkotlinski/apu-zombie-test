@@ -124,14 +124,6 @@ beep_pause:
 	jr	nz,:-
 	ret
 
-switch_to_cgb_double_speed:
-	ld	a,$30
-	ldh	[0],a
-	ld	a,1
-	ldh	[$4d],a
-	stop
-	ret
-
 dec_vol:
 	; Zombie mode fails when writing 9 to NRx2 while DIV bit 4 changes to 1.
 	; (This was observed during $6F=>$70 transition in SameBoy, single-speed mode.)
@@ -167,4 +159,12 @@ random_pause:
 	inc	a
 :	dec	a
 	jr	nz,:-
+	ret
+
+switch_to_cgb_double_speed:
+	ld	a,$30
+	ldh	[0],a
+	ld	a,1
+	ldh	[$4d],a
+	stop
 	ret
