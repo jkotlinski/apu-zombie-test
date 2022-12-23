@@ -87,10 +87,10 @@ SECTION "test",ROM0[$150]
 
 	ld	c,$12 ; point c to PU1 envelope
 
-	ld	hl,0
+	ld	hl,2338
 
 	; we are now at max volume.
-	; as a stress test, go to 0 volume and back 65536 times.
+	; as a stress test, go to 0 volume and back a lot of times.
 
 mainloop:
 	; pad loop to a prime number of cycles (223).
