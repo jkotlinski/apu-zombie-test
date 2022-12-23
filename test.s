@@ -50,7 +50,6 @@ SECTION "test",ROM0[$150]
 	; store cpu type
 	sub	a,$11
 	ldh	[is_dmg],a
-	or	a
 	call	z,switch_to_cgb_double_speed
 
         ; master volume
@@ -107,21 +106,20 @@ mainloop:
 
 pulse:
 	; we should now be at max volume again.
-	; to prove this, switch between max/min volume with a pause.
+	; to prove this, emit max volume beeps with silent pauses.
 
 	call	pause
 	dec_vol_15_times
 	call	pause
 	inc_vol_15_times
-	jp 	pulse
+	jr 	pulse
 
 pause:
 	ld	hl,0
-pause_loop:
-	dec	hl
+:	dec	hl
 	ld	a,h
 	or	a,l
-	jr	nz,pause_loop
+	jr	nz,:-
 	ret
 
 switch_to_cgb_double_speed:
