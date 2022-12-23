@@ -2,11 +2,12 @@
 ; Copyright (c) 2022 Johan Kotlinski
 
 MACRO dec_vol		
-	; Tries to avoid APU tick during decrease.
-	; $1f was determined by trial and error.
+	; Observed on SameBoy CGB-E:
+	; Zombie mode fails when writing 9 to NRx2 at the same time as DIV bit 4 is set.
+	; This loop avoids that by delaying the NRx2 write.
 : 	ldh	a,[4]
 	and	$1f
-	cp	a,$1f
+	cp	a,$f
 	jr	z,:-
 
 	ld	a,9
