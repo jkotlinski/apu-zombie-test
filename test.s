@@ -50,8 +50,8 @@ SECTION "test",ROM0[$150]
 	; store cpu type
 	sub	a,$11
 	ldh	[is_dmg],a
-
-	call	switch_to_cgb_double_speed
+	or	a
+	call	z,switch_to_cgb_double_speed
 
         ; master volume
         ld      a,$77
