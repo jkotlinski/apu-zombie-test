@@ -1,39 +1,22 @@
 ; MIT License
 ; Copyright (c) 2022 Johan Kotlinski
 
-MACRO dec_vol		
-	; Observed on SameBoy CGB-E:
-	; Zombie mode fails when writing 9 to NRx2 at the same time as DIV bit 4 is set.
-	; This loop avoids that by delaying the NRx2 write.
-: 	ldh	a,[4]
-	and	$1f
-	cp	a,$f
-	jr	z,:-
-
-	ld	a,9
-	ldh	[c],a
-	ld	a,$11
-	ldh	[c],a
-	ld	a,$18
-	ldh	[c],a
-ENDM
-
 MACRO dec_vol_15_times	
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
-	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
+	call	dec_vol
 ENDM
 
 MACRO inc_vol_15_times
@@ -60,7 +43,16 @@ ENDM
 SECTION "boot",ROM0[$100]
         jr      $150
 
+SECTION "hram",HRAM[$ff80]
+is_dmg:	db
+
 SECTION "test",ROM0[$150]
+	; store cpu type
+	sub	a,$11
+	ldh	[is_dmg],a
+
+	call	switch_to_cgb_double_speed
+
         ; master volume
         ld      a,$77
         ldh     [$24],a
@@ -130,4 +122,41 @@ pause_loop:
 	ld	a,h
 	or	a,l
 	jr	nz,pause_loop
+	ret
+
+switch_to_cgb_double_speed:
+	ld	a,$30
+	ldh	[0],a
+	ld	a,1
+	ldh	[$4d],a
+	stop
+	ret
+
+dec_vol:
+	; Zombie mode fails when writing 9 to NRx2 while DIV bit 4 changes to 1.
+	; (This was observed during $6F=>$70 transition in SameBoy, single-speed mode.)
+	; The below loops avoids that by delaying the NRx2 write.
+	; On CGB double speed, the problem ought to be with bit 5 instead.
+
+	ldh	a,[is_dmg]
+	or	a
+	jr	nz,:++
+:  	ldh	a,[4]
+	and	$3f
+	cp	a,$1f
+	jr	nz,zombie_decrease_volume
+	jr	:-
+: 	ldh	a,[4]
+	and	$1f
+	cp	a,$f
+	jr	z,:-
+
+	; Now that DIV has a safe value, actually decrease volume.
+zombie_decrease_volume:
+	ld	a,9
+	ldh	[c],a
+	ld	a,$11
+	ldh	[c],a
+	ld	a,$18
+	ldh	[c],a
 	ret
