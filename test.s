@@ -95,6 +95,8 @@ mainloop:
 	dec_vol_15_times
 	inc_vol_15_times
 
+	call	random_pause
+
 	dec	hl
 	ld	a,h
 	or	a,l
@@ -104,17 +106,17 @@ mainloop:
 	ld	a,$ff
 	ldh	[$25],a
 
-pulse:
+beep:
 	; we should now be at max volume again.
 	; to prove this, emit max volume beeps with silent pauses.
 
-	call	pause
+	call	beep_pause
 	dec_vol_15_times
-	call	pause
+	call	beep_pause
 	inc_vol_15_times
-	jr 	pulse
+	jr 	beep
 
-pause:
+beep_pause:
 	ld	hl,0
 :	dec	hl
 	ld	a,h
@@ -157,4 +159,12 @@ zombie_decrease_volume:
 	ldh	[c],a
 	ld	a,$18
 	ldh	[c],a
+	ret
+
+	; Not particularly random, but should increase coverage a bit.
+random_pause:
+	ldh	a,[$44]	; LCDC Y-coordinate
+	inc	a
+:	dec	a
+	jr	nz,:-
 	ret
