@@ -1,7 +1,7 @@
 ; MIT License
 ; Copyright (c) 2022 Johan Kotlinski
 
-MACRO dec_vol_15_times	
+MACRO dec_vol_15_times
 	call	dec_vol
 	call	dec_vol
 	call	dec_vol
@@ -84,7 +84,21 @@ SECTION "test",ROM0[$150]
 	ld	a,$80
 	ldh	[$14],a
 
-	ld	c,$12 ; point c to PU1 envelope
+	; NOI length
+	ld	a,0
+	ldh	[$20],a
+
+	; NOI envelope
+	ld	a,$f8
+	ldh	[$21],a
+
+	; NOI prng
+	ld	a,0
+	ldh	[$22],a
+
+	; NOI trig
+	ld	a,$80
+	ldh	[$23],a
 
 	ld	hl,0
 
@@ -92,8 +106,13 @@ SECTION "test",ROM0[$150]
 	; as a stress test, go to 0 volume and back a lot of times.
 
 mainloop:
-	dec_vol_15_times
-	inc_vol_15_times
+	ld	c,$12		; PU1 envelope
+	dec_vol_15_times	; volume => 0
+	inc_vol_15_times	; volume => 15
+
+	ld	c,$21		; NOI envelope
+	dec_vol_15_times	; volume => 0
+	inc_vol_15_times	; volume => 15
 
 	call	random_pause
 
@@ -106,15 +125,30 @@ mainloop:
 	ld	a,$ff
 	ldh	[$25],a
 
-beep:
-	; we should now be at max volume again.
-	; to prove this, emit max volume beeps with silent pauses.
+	dec_vol_15_times	; NOI volume => 0
+
+beep: 	; Alternates between noise/pulse at max volume.
 
 	call	beep_pause
-	dec_vol_15_times
+
+	ld	c,$12		; PU1 envelope
+	dec_vol_15_times	; volume => 0
+
 	call	beep_pause
-	inc_vol_15_times
-	jr 	beep
+
+	ld	c,$21		; NOI envelope
+	inc_vol_15_times	; volume => 15
+
+	call	beep_pause
+
+	dec_vol_15_times	; volume => 0
+
+	call	beep_pause
+
+	ld	c,$12		; PU1 envelope
+	inc_vol_15_times	; volume => 15
+
+	jp 	beep
 
 beep_pause:
 	ld	hl,0
@@ -136,7 +170,7 @@ dec_vol:
 :  	ldh	a,[4]
 	and	$3f
 	cp	a,$1f
-	jr	nz,zombie_decrease_volume
+	jr	nz,do_dec_vol
 	jr	:-
 : 	ldh	a,[4]
 	and	$1f
@@ -144,7 +178,7 @@ dec_vol:
 	jr	z,:-
 
 	; Now that DIV has a safe value, actually decrease volume.
-zombie_decrease_volume:
+do_dec_vol:
 	ld	a,9
 	ldh	[c],a
 	ld	a,$11
