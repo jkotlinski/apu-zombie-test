@@ -102,8 +102,8 @@ SECTION "test",ROM0[$150]
 
 	ld	hl,0
 
-	; we are now at max volume.
-	; as a stress test, go to 0 volume and back a lot of times.
+	; We are now at max volume.
+	; As a stress test, go to 0 volume and back a lot of times.
 
 mainloop:
 	ld	c,$12		; PU1 envelope
@@ -121,7 +121,7 @@ mainloop:
 	or	a,l
 	jp	nz,mainloop
 
-	; unmute all channels
+	; Unmutes all channels.
 	ld	a,$ff
 	ldh	[$25],a
 
@@ -159,26 +159,22 @@ beep_pause:
 	ret
 
 dec_vol:
-	; Zombie mode fails when writing 9 to NRx2 while DIV bit 4 changes to 1.
-	; (This was observed during $6F=>$70 transition in SameBoy, single-speed mode.)
-	; The below loops avoid that by delaying the NRx2 write.
-	; On CGB double speed, the problem ought to be with bit 5 instead.
-
+	; Spins until DIV reached a safe value.
 	ldh	a,[is_dmg]
 	or	a
 	jr	nz,:++
-:  	ldh	a,[4]
+:  	ldh	a,[4]	; DIV
 	and	$3f
 	cp	a,$1f
 	jr	nz,do_dec_vol
 	jr	:-
-: 	ldh	a,[4]
+: 	ldh	a,[4]	; DIV
 	and	$1f
 	cp	a,$f
 	jr	z,:-
 
-	; Now that DIV has a safe value, actually decrease volume.
 do_dec_vol:
+	; Decrements volume.
 	ld	a,9
 	ldh	[c],a
 	ld	a,$11
@@ -187,9 +183,8 @@ do_dec_vol:
 	ldh	[c],a
 	ret
 
-	; Not particularly random, but should increase coverage a bit.
 random_pause:
-	ldh	a,[$44]	; LCDC Y-coordinate
+	ldh	a,[$44]	; LCDC
 	inc	a
 :	dec	a
 	jr	nz,:-
