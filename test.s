@@ -159,23 +159,19 @@ beep_pause:
 	ret
 
 dec_vol:
-	; Spins until DIV reached a safe value.
 	ldh	a,[is_dmg]
 	or	a
 	jr	nz,:++
 :  	ldh	a,[4]	; DIV
 	and	$3f
 	cp	a,$1f
-	jr	nz,do_dec_vol
+	jr	nz,:++
 	jr	:-
 : 	ldh	a,[4]	; DIV
 	and	$1f
 	cp	a,$f
 	jr	z,:-
-
-do_dec_vol:
-	; Decrements volume.
-	ld	a,9
+: 	ld	a,9
 	ldh	[c],a
 	ld	a,$11
 	ldh	[c],a
