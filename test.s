@@ -190,40 +190,31 @@ switch_to_cgb_double_speed:
 	ret
 
 random_pause:
-	push	hl
-
 	; Random number generator using the linear congruential method
 	;  X(n+1) = (a*X(n)+c) mod m
+	; with a = 17, m = 16 and c = $5c93 (arbitrarily)
+	; Ref: D. E. Knuth, "The Art of Computer Programming", Volume 2
 
-	ldh	a,[randlo]
-	ld	l,a
-	ld    	e,a
+	push	hl
+
 	ldh     a,[randhi]
-	ld      d,a
+	ld	d,a
+	ld	h,a
+	ldh	a,[randlo]
+	ld	e,a
+	ld	l,a
 
-	sla   	l
-	rla
-	sla   	l
-	rla
-	sla     l
-	rla
-	sla     l
-	rla
-	ld      h,a
-
-	ld      a,e
-	add     a,l
-	ld      l,a
-
-	ld      a,h
-	adc     a,d
-	ld      h,a
+	add	hl,hl
+	add	hl,hl
+	add	hl,hl
+	add	hl,hl
+	add	hl,de
+	ld	de,$5c93
+	add	hl,de
 
 	ld      a,l
-	add     a,$93
 	ldh     [randlo],a
 	ld    	a,h
-	adc   	a,$5c
 	ldh     [randhi],a
 
 	pop	hl
