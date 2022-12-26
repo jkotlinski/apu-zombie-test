@@ -54,6 +54,12 @@ SECTION "test",ROM0[$150]
 	ldh	[is_dmg],a
 	call	z,switch_to_cgb_double_speed
 
+	; random seed (arbitrary)
+	ld	a,$a2
+	ldh	[randhi],a
+	ld	a,$7e
+	ldh	[randlo],a
+
         ; master volume
         ld      a,$77
         ldh     [$24],a
