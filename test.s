@@ -45,6 +45,8 @@ SECTION "boot",ROM0[$100]
 
 SECTION "hram",HRAM[$ff80]
 is_dmg:	db
+randhi:	db
+randlo:	db
 
 SECTION "test",ROM0[$150]
 	; store cpu type
@@ -179,17 +181,53 @@ dec_vol:
 	ldh	[c],a
 	ret
 
-random_pause:
-	ldh	a,[$44]	; LCDC
-	inc	a
-:	dec	a
-	jr	nz,:-
-	ret
-
 switch_to_cgb_double_speed:
 	ld	a,$30
 	ldh	[0],a
 	ld	a,1
 	ldh	[$4d],a
 	stop
+	ret
+
+random_pause:
+	push	hl
+
+	; Random number generator using the linear congruential method
+	;  X(n+1) = (a*X(n)+c) mod m
+
+	ldh	a,[randlo]
+	ld	l,a
+	ld    	e,a
+	ldh     a,[randhi]
+	ld      d,a
+
+	sla   	l
+	rla
+	sla   	l
+	rla
+	sla     l
+	rla
+	sla     l
+	rla
+	ld      h,a
+
+	ld      a,e
+	add     a,l
+	ld      l,a
+
+	ld      a,h
+	adc     a,d
+	ld      h,a
+
+	ld      a,l
+	add     a,$93
+	ldh     [randlo],a
+	ld    	a,h
+	adc   	a,$5c
+	ldh     [randhi],a
+
+	pop	hl
+
+:	dec	a
+	jr	nz,:-
 	ret
