@@ -9,3 +9,41 @@ Tests the Game Boy amplitude envelope generation techniques known as "zombie mod
 3. Wait a while (up to two minutes, depending on device).
 4. Verify that the device beeps loudly, like [expected-dmg.mp3](expected-dmg.mp3) or [expected-cgb.mp3](expected-cgb.mp3).
 5. Add your results to [the Wiki page](https://github.com/jkotlinski/apu-zombie-test/wiki).
+
+## Zombie Mode Description
+
+To enter zombie mode, start pulse/noise sounds with length counter disabled and NRx2_REG set to $x8. (x = initial volume)
+
+To increase volume by one, write 8 to NRx2_REG.
+
+To decrease volume by one, point `c` register to NRx2_REG and execute one of following code snippets, depending on CPU speed:
+            
+    decrease_volume_by_one_1x: ; DMG, CGB with single-speed
+    :       ldh     a,[4]   ; DIV
+            and     $1f
+            cp      a,$f
+            jr      z,:-
+            ld      a,9
+            ldh     [c],a
+            ld      a,$11
+            ldh     [c],a
+            ld      a,$18
+            ldh     [c],a
+            ret
+            
+    decrease_volume_by_one_2x: ; CGB with double-speed
+    :       ldh     a,[4]   ; DIV
+            and     $3f
+            cp      a,$1f
+            jr      z,:-
+            ld      a,9
+            ldh     [c],a
+            ld      a,$11
+            ldh     [c],a
+            ld      a,$18
+            ldh     [c],a
+            ret
+
+# References
+
+https://github.com/AntonioND/giibiiadvance/blob/master/docs/other_docs/GBSOUND.txt
