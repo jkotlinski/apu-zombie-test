@@ -19,10 +19,10 @@ To increase volume by one, write 8 to NRx2_REG.
 To decrease volume by one, point `c` register to NRx2_REG and execute one of following code snippets, depending on CPU speed:
             
     dec_vol_by_one_normal_speed:
-            ldh     a,[4]   ; DIV
+    :       ldh     a,[4]   ; DIV
             and     $1f
             cp      a,$f
-            jr      z,dec_vol_by_one_normal_speed
+            jr      z,:-
             ld      a,9
             ldh     [c],a
             ld      a,$11
@@ -32,10 +32,10 @@ To decrease volume by one, point `c` register to NRx2_REG and execute one of fol
             ret
             
     dec_vol_by_one_cgb_double_speed:
-            ldh     a,[4]   ; DIV
+    :       ldh     a,[4]   ; DIV
             and     $3f
             cp      a,$1f
-            jr      z,dec_vol_by_one_cgb_double_speed
+            jr      z,:-
             ld      a,9
             ldh     [c],a
             ld      a,$11
