@@ -12,7 +12,7 @@ Tests the Game Boy amplitude envelope generation techniques known as "zombie mod
 
 ## Zombie Mode HOWTO
 
-To enter zombie mode, start pulse/noise sounds with NRx2_REG set to $x8. (x = initial volume)
+To enter zombie mode, start any pulse/noise channel with NRx2_REG set to $x8. (x = initial volume)
 
 To increase volume by one, write 8 to NRx2_REG.
 
