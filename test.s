@@ -2,7 +2,7 @@
 ; Copyright (c) 2022 Johan Kotlinski
 
 MACRO dec_vol_15_times
-	call	dec_vol
+	call	safe_dec_vol
 	call	dec_vol
 	call	dec_vol
 	call	dec_vol
@@ -166,20 +166,21 @@ beep_pause:
 	jr	nz,:-
 	ret
 
-dec_vol:
+safe_dec_vol: ; avoids envelope lockup when decreasing to $e
 	ldh	a,[is_dmg]
 	or	a
 	jr	nz,:++
 :  	ldh	a,[4]	; DIV
 	and	$3f
 	cp	a,$1f
-	jr	nz,:++
+	jr	nz,dec_vol
 	jr	:-
 : 	ldh	a,[4]	; DIV
 	and	$1f
 	cp	a,$f
 	jr	z,:-
-: 	ld	a,9
+dec_vol:
+	ld	a,9
 	ldh	[c],a
 	ld	a,$11
 	ldh	[c],a

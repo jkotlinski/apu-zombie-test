@@ -16,30 +16,26 @@ To enter zombie mode, start any pulse/noise channel with NRx2_REG set to $x8. (x
 
 To increase volume by one, write 8 to NRx2_REG.
 
-To decrease volume by one, point `c` register to NRx2_REG and execute one of following code snippets, depending on CPU speed:
+To decrease volume by one, point `c` register to NRx2_REG and call either `safe_dec_vol` or `dec_vol`.
             
-    dec_vol_normal_speed:
-    :       ldh     a,[4]   ; DIV
-            and     $1f
-            cp      a,$f
-            jr      z,:-
-            ld      a,9
-            ldh     [c],a
-            ld      a,$11
-            ldh     [c],a
-            ld      a,$18
-            ldh     [c],a
-            ret
-            
-    dec_vol_cgb_double_speed:
-    :       ldh     a,[4]   ; DIV
-            and     $3f
-            cp      a,$1f
-            jr      z,:-
-            ld      a,9
-            ldh     [c],a
-            ld      a,$11
-            ldh     [c],a
-            ld      a,$18
-            ldh     [c],a
-            ret
+	safe_dec_vol: ; avoids envelope lockup when decreasing to $e
+		ldh	a,[is_dmg]
+		or	a
+		jr	nz,:++
+	:  	ldh	a,[4]	; DIV
+		and	$3f
+		cp	a,$1f
+		jr	nz,dec_vol
+		jr	:-
+	: 	ldh	a,[4]	; DIV
+		and	$1f
+		cp	a,$f
+		jr	z,:-
+	dec_vol:
+		ld	a,9
+		ldh	[c],a
+		ld	a,$11
+		ldh	[c],a
+		ld	a,$18
+		ldh	[c],a
+		ret
