@@ -18,7 +18,7 @@ To increase volume by one, write 8 to NRx2_REG.
 
 To decrease volume by one, point `c` register to NRx2_REG and call either `safe_dec_vol` or `dec_vol`.
             
-	safe_dec_vol: ; avoids envelope lockup when decreasing to $e
+	safe_dec_vol: ; avoids rare envelope lockup when decreasing to $e
 		ldh	a,[is_dmg]
 		or	a
 		jr	nz,:++
