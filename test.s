@@ -109,7 +109,6 @@ SECTION "test",ROM0[$150]
 	ldh	[$23],a
 
 	ld	hl,0
-	ld	b,0
 
 	; We are now at max volume.
 	; As a stress test, go to 0 volume and back a lot of times.
@@ -128,8 +127,6 @@ mainloop:
 	dec	hl
 	ld	a,h
 	or	a,l
-	jp	nz,mainloop
-	dec	b
 	jp	nz,mainloop
 
 	; Unmutes all channels.
